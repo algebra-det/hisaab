@@ -1,25 +1,34 @@
-const path = require("path");
 const express = require("express");
 const app = express();
 const port = 8000;
+const db = require("./database");
+
+const authenticate = async () => {
+  try {
+    await db.authenticate();
+    console.log("Connection has been established successfully.");
+    db.sync({ alter: true });
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+};
+authenticate();
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
   console.log("First Middle Ware", req.query, req.body);
   next();
 });
 
-const baseRouter = require("./routes/base");
+const homeRouter = require("./routes/home");
 const adminRouter = require("./routes/admin");
-const rootDir = require("./utils/path");
 
 app.use("/admin", adminRouter);
-app.use("/", baseRouter);
+app.use("/", homeRouter);
 
 app.use((req, res, next) => {
-  res.status(200).sendFile(path.join(rootDir, "views", "404", "404.html"));
+  res.status(404).send({ message: "No Page found" });
 });
 
 app.listen(port, () => {

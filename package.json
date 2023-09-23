@@ -11,7 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "mongodb": "^2.2.16"
+    "mongodb": "^2.2.16",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.33.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
