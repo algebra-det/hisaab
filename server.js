@@ -7,6 +7,7 @@ const authenticate = async () => {
   try {
     await db.authenticate();
     console.log("Connection has been established successfully.");
+    require("./models");
     db.sync({ alter: true });
   } catch (error) {
     console.error("Unable to connect to the database:", error);
