@@ -3,6 +3,8 @@ const transactions = require("../models/Transaction");
 const users = require("../models/User");
 
 router.get("/", async (req, res, next) => {
+  // creating one row data in DB beforehand
+
   // const user = await users.create({
   //   firstName: "Akash",
   //   lastName: "Chauhan",
