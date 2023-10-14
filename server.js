@@ -3,7 +3,7 @@ const app = express();
 const port = 8000;
 const db = require("./database");
 
-const authenticate = async () => {
+const authenticateDB = async () => {
   try {
     await db.authenticate();
     console.log("Connection has been established successfully.");
@@ -13,7 +13,7 @@ const authenticate = async () => {
     console.error("Unable to connect to the database:", error);
   }
 };
-authenticate();
+authenticateDB();
 
 // For parsing application/json
 app.use(express.json());
