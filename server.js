@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const port = 8000;
 const db = require("./database");
+const authMiddleware = require("./middleware/authMiddleware");
+require("dotenv").config();
 
 const authenticateDB = async () => {
   try {
@@ -26,9 +28,17 @@ app.use((req, res, next) => {
 
 const homeRouter = require("./routes/home");
 const adminRouter = require("./routes/admin");
+const authRouter = require("./routes/auth");
 
+app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
-app.use("/", homeRouter);
+app.use("/transactions", authMiddleware, homeRouter);
+
+// Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ messagee: "Something went wronng!" });
+});
 
 app.use((req, res, next) => {
   res.status(404).send({ message: "No Page found" });
