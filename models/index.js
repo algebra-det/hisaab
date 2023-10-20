@@ -4,8 +4,11 @@ const profile = require("../models/Profile");
 
 users.hasMany(transactions, {
   foreignKey: "createdBy",
+  onDelete: "CASCADE",
 });
 transactions.belongsTo(users, {
   foreignKey: "createdBy",
 });
-users.hasOne(profile);
+users.hasOne(profile, {
+  onDelete: "CASCADE",
+});
