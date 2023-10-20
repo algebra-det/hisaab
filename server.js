@@ -36,7 +36,7 @@ app.use("/transactions", authMiddleware, transactionRouter);
 
 // Error Handler
 app.use((error, req, res, next) => {
-  console.error(error.stack);
+  console.error("midddleError", error.stack);
   res.status(500).json({ messagee: "Something went wronng!" });
 });
 
