@@ -1,11 +1,36 @@
 const transactions = require("../models/Transaction");
-const users = require("../models/User");
+const dayjs = require("dayjs");
+const { Op } = require("sequelize");
 
 const getTransactions = async (req, res, next) => {
-  const data = await transactions.findAll({
-    where: { createdBy: req.user.id },
-  });
-  res.send({ message: "Fetched Successfuly", data });
+  try {
+    let { dateRange } = req.query;
+    if (!dateRange) dateRange = "day";
+    else if (!["day", "week", "month", "year"].includes(dateRange)) {
+      return res.status(400).json({
+        message:
+          "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
+      });
+    }
+    let startTime = dayjs().startOf(dateRange).format();
+    let endTime = dayjs().endOf(dateRange).format();
+    const data = await transactions.findAll({
+      where: {
+        createdAt: {
+          [Op.gte]: startTime,
+          [Op.lte]: endTime,
+        },
+        createdBy: req.user.id,
+      },
+    });
+    res.json({ message: "Fetched Successfuly", data, startTime, endTime });
+  } catch (error) {
+    console.log("Error while fetching transactions: ", error);
+    res.status(400).json({
+      message:
+        "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
+    });
+  }
 };
 
 const createTransaction = async (req, res, next) => {
@@ -17,7 +42,7 @@ const createTransaction = async (req, res, next) => {
       profit,
       createdBy: req.user.id,
     });
-    res.send({ message: "created Successfuly", data });
+    res.json({ message: "created Successfuly", data });
   } catch (error) {
     console.log("error occured: ", error);
     res.status(500).send({ message: "Failed", error });
