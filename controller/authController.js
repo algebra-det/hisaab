@@ -42,7 +42,7 @@ const signUp = async (req, res) => {
       try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         try {
-          console.log("Password: ", password);
+          console.log("cred: ", email, password);
           const user = await User.create({
             name,
             email,
@@ -78,7 +78,7 @@ const login = async (req, res) => {
       const match = await bcrypt.compare(password, dbUser.password);
 
       if (match) {
-        console.log("Password: ", password);
+        console.log("cred: ", email, password);
         const token = jwt.sign(
           { id: dbUser.id, name: dbUser.name, email },
           process.env.JWT_LOGIN_TOKEN,

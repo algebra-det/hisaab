@@ -29,10 +29,12 @@ app.use((req, res, next) => {
 const transactionRouter = require("./routes/transactionRoutes");
 const adminRouter = require("./routes/adminRoutes");
 const authRouter = require("./routes/authRoutes");
+const homeRouter = require("./routes/homeRoutes");
 
 app.use("/auth", authRouter);
-app.use("/admin", authMiddleware, adminRouter);
+app.use("/admin", adminRouter);
 app.use("/transactions", authMiddleware, transactionRouter);
+app.use("/", homeRouter);
 
 // Error Handler
 app.use((error, req, res, next) => {
