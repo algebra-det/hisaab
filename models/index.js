@@ -5,7 +5,4 @@ const profile = require("../models/Profile");
 users.hasMany(transactions, {
   foreignKey: "createdBy",
 });
-transactions.belongsTo(users, {
-  foreignKey: "createdBy",
-});
 users.hasOne(profile);
