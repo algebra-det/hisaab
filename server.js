@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
 const port = 8000;
+require("dotenv").config();
 const db = require("./database");
 const authMiddleware = require("./middleware/authMiddleware");
-require("dotenv").config();
 
 const authenticateDB = async () => {
   try {
