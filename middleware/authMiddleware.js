@@ -1,16 +1,16 @@
-const tokenCheckInHeader = (req, res) => {
+const jwt = require("jsonwebtoken");
+
+const tokenCheckInHeader = (req, res, next) => {
   let token = req.headers.authorization;
 
   if (token) {
     const token = req.headers.authorization?.split(" ")[1];
     try {
       const decode = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);
-
-      req.user = {
-        auth: true,
-        data: decode,
-      };
+      req.user = decode;
+      next();
     } catch (error) {
+      console.log("error: ", error);
       res.status(400).json({
         auth: false,
         data: "Invalid Token",

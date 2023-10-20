@@ -24,9 +24,7 @@ const validateSignupData = async (req, res) => {
 
   // check if email exists in DB!
   const existingUser = await User.findOne({ where: { email: email } });
-  console.log("Existing: ", existingUser);
   if (existingUser) {
-    console.log("Email Already Registered");
     res.status(400).json({ message: "Email Already Registered" });
     return false;
   }
@@ -37,27 +35,22 @@ const validateSignupData = async (req, res) => {
 const signUp = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    console.log(name, email, password);
 
     // Validate Inputs
-    console.log("Validating");
     const isValid = await validateSignupData(req, res);
     if (isValid) {
       try {
-        console.log("hashing");
         const hashedPassword = await bcrypt.hash(password, saltRounds);
-        console.log("creating user", hashedPassword);
         try {
           const user = await User.create({
             name,
             email,
             password: hashedPassword,
           });
-          console.log("user created , responsing");
 
           return res.json({
             message: "Account Created Successfully",
-            user: { _id: user._id, name: user.name, email: user.email },
+            user: { id: user.id, name: user.name, email: user.email },
           });
         } catch (error) {
           return res.status(400).json({ message: error?.errors });
@@ -84,15 +77,11 @@ const login = async (req, res) => {
       const match = await bcrypt.compare(password, dbUser.password);
 
       if (match) {
-        console.log("Matched: ", match);
         const token = jwt.sign(
-          { _id: dbUser._id, name: dbUser.name, email },
+          { id: dbUser.id, name: dbUser.name, email },
           process.env.JWT_LOGIN_TOKEN,
-          {
-            expiresIn: "1d",
-          }
+          { expiresIn: "1d" }
         );
-
         res.json({
           message: "Login Successful",
           token,
@@ -108,7 +97,6 @@ const login = async (req, res) => {
 
 const auth = (req, res) => {
   const { token } = req.body;
-
   if (token) {
     try {
       const decode = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);

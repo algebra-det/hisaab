@@ -26,17 +26,17 @@ app.use((req, res, next) => {
   next();
 });
 
-const homeRouter = require("./routes/home");
-const adminRouter = require("./routes/admin");
-const authRouter = require("./routes/auth");
+const transactionRouter = require("./routes/transactionRoutes");
+const adminRouter = require("./routes/adminRoutes");
+const authRouter = require("./routes/authRoutes");
 
 app.use("/auth", authRouter);
-app.use("/admin", adminRouter);
-app.use("/transactions", authMiddleware, homeRouter);
+app.use("/admin", authMiddleware, adminRouter);
+app.use("/transactions", authMiddleware, transactionRouter);
 
 // Error Handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
+app.use((error, req, res, next) => {
+  console.error(error.stack);
   res.status(500).json({ messagee: "Something went wronng!" });
 });
 
