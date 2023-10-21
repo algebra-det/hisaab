@@ -37,33 +37,41 @@ const activateUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const userBody = req.body;
-  const { userId } = req.params;
-  delete userBody["id"];
-  if (!userId)
-    return res.status(400).json({
-      message: "user id is required",
-    });
-  if (userBody.password)
-    userBody.password = await hashString(userBody.password);
+  try {
+    const userBody = req.body;
+    const { userId } = req.params;
+    delete userBody["id"];
+    if (!userId)
+      return res.status(400).json({
+        message: "user id is required",
+      });
+    if (userBody.password)
+      userBody.password = await hashString(userBody.password);
 
-  const requiredUser = await users.findByPk(userId);
-  if (!requiredUser)
-    return res.status(400).json({
-      message: `No User found with ID ${userId}`,
-    });
+    const requiredUser = await users.findByPk(userId);
+    if (!requiredUser)
+      return res.status(400).json({
+        message: `No User found with ID ${userId}`,
+      });
 
-  if (requiredUser.role === "admin" || requiredUser.id === req.user.id)
-    return res.status(400).json({
-      message: `Not Authorized to delete such/this user(s)`,
-    });
+    if (requiredUser.role === "admin" || requiredUser.id === req.user.id)
+      return res.status(400).json({
+        message: `Not Authorized to delete such/this user(s)`,
+      });
 
-  await requiredUser.update({ ...userBody });
-  delete requiredUser["password"];
-  return res.json({
-    message: "User Status updated successfully",
-    data: requiredUser,
-  });
+    await requiredUser.update({ ...userBody });
+    delete requiredUser["password"];
+    return res.json({
+      message: "User Status updated successfully",
+      data: requiredUser,
+    });
+  } catch (error) {
+    console.log("Error while updating user: ", error);
+    return res.status(400).json({
+      message: "Can't update user",
+      error,
+    });
+  }
 };
 
 const deleteUser = async (req, res) => {
