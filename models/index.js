@@ -22,5 +22,10 @@ products.belongsTo(users, {
 });
 
 users.hasOne(profile, {
+  foreignKey: { name: "userId", allowNull: false },
+  onDelete: "CASCADE",
+});
+profile.belongsTo(users, {
+  foreignKey: { name: "userId", allowNull: false },
   onDelete: "CASCADE",
 });

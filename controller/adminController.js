@@ -23,7 +23,6 @@ const allUsers = async (req, res, next) => {
 const activateUser = async (req, res) => {
   const { active } = req.body;
   const { userId } = req.params;
-  console.log("Active is: ", active, typeof active);
   if (!userId || typeof active !== "boolean")
     return res.status(400).json({
       message: "Please enter correct values",
@@ -66,7 +65,6 @@ const updateUser = async (req, res) => {
       });
 
     await requiredUser.update({ ...userBody });
-    delete requiredUser["password"];
     return res.json({
       message: "User Status updated successfully",
       data: requiredUser,

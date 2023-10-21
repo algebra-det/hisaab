@@ -49,7 +49,6 @@ const signUp = async (req, res) => {
             email,
             password: hashedPassword,
           });
-
           return res.json({
             message: "Account Created Successfully",
             user: { id: user.id, name: user.name, email: user.email },
@@ -74,7 +73,12 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     // check if email exists in DB!
-    const dbUser = await User.findOne({ where: { email: email } });
+    const dbUser = await User.findOne({
+      where: { email: email },
+      attributes: {
+        include: ["password"],
+      },
+    });
     if (dbUser) {
       const match = await compareOtherStringWithHashedString(
         password,

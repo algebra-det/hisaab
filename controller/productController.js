@@ -3,7 +3,6 @@ const { Op } = require("sequelize");
 
 const getProductsViaSearch = async (req, res, next) => {
   let { searchText } = req.query;
-  console.log("search Text is: ", typeof searchText);
   if (!searchText || searchText.length <= 2)
     return res.status(400).json({
       message:

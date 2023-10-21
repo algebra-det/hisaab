@@ -1,13 +1,10 @@
 const { DataTypes } = require("sequelize");
 const db = require("../../database");
+const createProfileHook = require("../../database/userHooks");
 
 module.exports = db.define(
   "User",
   {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -36,6 +33,11 @@ module.exports = db.define(
   {
     defaultScope: {
       attributes: { exclude: ["password"] },
+    },
+    hooks: {
+      afterCreate(user) {
+        createProfileHook(user);
+      },
     },
   }
 );
