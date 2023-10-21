@@ -1,4 +1,4 @@
-const users = require("../models/User");
+const User = require("../models/User");
 const { Op } = require("sequelize");
 const { hashString } = require("../helpers/bcryptHelper");
 
@@ -6,7 +6,7 @@ const allUsers = async (req, res, next) => {
   let { limit, offset } = req.query;
   if (!offset) offset = 0;
   if (!limit) limit = 10;
-  const { count, rows } = await users.findAndCountAll({
+  const { count, rows } = await User.findAndCountAll({
     limit,
     offset,
     where: {
@@ -29,7 +29,7 @@ const activateUser = async (req, res) => {
       message: "Please enter correct values",
     });
 
-  const requiredUser = await users.findByPk(userId);
+  const requiredUser = await User.findByPk(userId);
   if (!requiredUser)
     return res.status(400).json({
       message: `No User found with ID ${userId}`,
@@ -54,7 +54,7 @@ const updateUser = async (req, res) => {
     if (userBody.password)
       userBody.password = await hashString(userBody.password);
 
-    const requiredUser = await users.findByPk(userId);
+    const requiredUser = await User.findByPk(userId);
     if (!requiredUser)
       return res.status(400).json({
         message: `No User found with ID ${userId}`,
@@ -87,7 +87,7 @@ const deleteUser = async (req, res) => {
       message: "UserId is required",
     });
 
-  const requiredUser = await users.findByPk(userId);
+  const requiredUser = await User.findByPk(userId);
   if (!requiredUser)
     return res.status(400).json({
       message: `No User found with ID ${userId}`,

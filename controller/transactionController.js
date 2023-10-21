@@ -1,4 +1,4 @@
-const transactions = require("../models/Transaction");
+const Transaction = require("../models/Transaction");
 const dayjs = require("dayjs");
 const { Op } = require("sequelize");
 
@@ -8,7 +8,7 @@ const getInstance = async (req, res) => {
     return res.status(400).json({
       message: "Transaction ID is required",
     });
-  const transaction = await transactions.findByPk(transactionId);
+  const transaction = await Transaction.findByPk(transactionId);
   if (!transaction)
     return res.status(400).json({
       message: "No transaction found.",
@@ -35,7 +35,7 @@ const getTransactions = async (req, res, next) => {
     }
     let startTime = dayjs(workingDate).startOf(dateRange).format();
     let endTime = dayjs(workingDate).endOf(dateRange).format();
-    const { count, rows } = await transactions.findAndCountAll({
+    const { count, rows } = await Transaction.findAndCountAll({
       limit,
       offset,
       where: {
@@ -65,7 +65,7 @@ const getTransactions = async (req, res, next) => {
 const createTransaction = async (req, res, next) => {
   try {
     const { productName, purchasePrice, sellingPrice } = req.body;
-    const data = await transactions.create({
+    const data = await Transaction.create({
       productName,
       purchasePrice,
       sellingPrice,
