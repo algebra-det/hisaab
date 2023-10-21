@@ -3,7 +3,7 @@ const app = express();
 const port = 8000;
 require("dotenv").config();
 const db = require("./database");
-const authMiddleware = require("./middleware/authMiddleware");
+const { checkTokenAndRole } = require("./middleware/authMiddleware");
 
 const authenticateDB = async () => {
   try {
@@ -32,8 +32,8 @@ const authRouter = require("./routes/authRoutes");
 const homeRouter = require("./routes/homeRoutes");
 
 app.use("/auth", authRouter);
-app.use("/admin", adminRouter);
-app.use("/transactions", authMiddleware, transactionRouter);
+app.use("/admin", checkTokenAndRole(["admin"]), adminRouter);
+app.use("/transactions", checkTokenAndRole(["client"]), transactionRouter);
 app.use("/", homeRouter);
 
 // Error Handler

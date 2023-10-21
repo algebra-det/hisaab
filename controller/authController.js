@@ -80,7 +80,7 @@ const login = async (req, res) => {
       if (match) {
         console.log("cred: ", email, password);
         const token = jwt.sign(
-          { id: dbUser.id, name: dbUser.name, email },
+          { id: dbUser.id, name: dbUser.name, email, role: dbUser.role },
           process.env.JWT_LOGIN_TOKEN,
           { expiresIn: "1d" }
         );

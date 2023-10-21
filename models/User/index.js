@@ -28,4 +28,8 @@ module.exports = db.define("User", {
       len: [3, 255],
     },
   },
+  role: {
+    type: DataTypes.ENUM(["admin", "client"]),
+    defaultValue: "client",
+  },
 });
