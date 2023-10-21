@@ -82,6 +82,10 @@ const login = async (req, res) => {
       );
 
       if (match) {
+        if (!dbUser.active)
+          return res.status(400).json({
+            message: "a/c not active, please contact admin for a/c activation.",
+          });
         console.log("cred: ", email, password);
         const token = jwt.sign(
           { id: dbUser.id, name: dbUser.name, email, role: dbUser.role },
