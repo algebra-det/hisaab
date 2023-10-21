@@ -1,8 +1,9 @@
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
-const saltRounds = 10;
+const {
+  hashString,
+  compareOtherStringWithHashedString,
+} = require("../helpers/bcryptHelper");
 
 const validateSignupData = async (req, res) => {
   const { name, email, password } = req.body;
@@ -40,7 +41,7 @@ const signUp = async (req, res) => {
     const isValid = await validateSignupData(req, res);
     if (isValid) {
       try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = await hashString(password);
         try {
           console.log("cred: ", email, password);
           const user = await User.create({
@@ -75,7 +76,10 @@ const login = async (req, res) => {
     // check if email exists in DB!
     const dbUser = await User.findOne({ where: { email: email } });
     if (dbUser) {
-      const match = await bcrypt.compare(password, dbUser.password);
+      const match = await compareOtherStringWithHashedString(
+        password,
+        dbUser.password
+      );
 
       if (match) {
         console.log("cred: ", email, password);

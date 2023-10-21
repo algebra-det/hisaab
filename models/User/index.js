@@ -32,4 +32,8 @@ module.exports = db.define("User", {
     type: DataTypes.ENUM(["admin", "client"]),
     defaultValue: "client",
   },
+  active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
