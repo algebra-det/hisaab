@@ -22,17 +22,22 @@ const getInstance = async (req, res) => {
 
 const getTransactions = async (req, res, next) => {
   try {
-    let { dateRange } = req.query;
+    let { dateRange, workingDate, limit, offset } = req.query;
     if (!dateRange) dateRange = "day";
+    if (!workingDate) workingDate = dayjs().format("YYYY-MM-DD");
+    if (!offset) offset = 0;
+    if (!limit) limit = 10;
     else if (!["day", "week", "month", "year"].includes(dateRange)) {
       return res.status(400).json({
         message:
           "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
       });
     }
-    let startTime = dayjs().startOf(dateRange).format();
-    let endTime = dayjs().endOf(dateRange).format();
-    const data = await transactions.findAll({
+    let startTime = dayjs(workingDate).startOf(dateRange).format();
+    let endTime = dayjs(workingDate).endOf(dateRange).format();
+    const { count, rows } = await transactions.findAndCountAll({
+      limit,
+      offset,
       where: {
         createdAt: {
           [Op.gte]: startTime,
@@ -41,12 +46,18 @@ const getTransactions = async (req, res, next) => {
         createdBy: req.user.id,
       },
     });
-    res.json({ message: "Fetched Successfuly", data, startTime, endTime });
+    res.json({
+      message: "Fetched Successfuly",
+      data: rows,
+      count,
+      startTime,
+      endTime,
+    });
   } catch (error) {
     console.log("Error while fetching transactions: ", error);
     res.status(400).json({
-      message:
-        "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
+      message: "Something went wrong",
+      error,
     });
   }
 };
