@@ -44,7 +44,8 @@ const updateUser = async (req, res) => {
     return res.status(400).json({
       message: "user id is required",
     });
-  if (userBody.password) userBody.password = hashString(password);
+  if (userBody.password)
+    userBody.password = await hashString(userBody.password);
 
   const requiredUser = await users.findByPk(userId);
   if (!requiredUser)
