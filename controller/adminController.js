@@ -6,7 +6,7 @@ const allUsers = async (req, res, next) => {
   let { limit, offset } = req.query;
   if (!offset) offset = 0;
   if (!limit) limit = 10;
-  const data = await users.findAll({
+  const { count, rows } = await users.findAndCountAll({
     limit,
     offset,
     where: {
@@ -15,7 +15,8 @@ const allUsers = async (req, res, next) => {
   });
   res.status(400).json({
     message: "Fetched Successfully",
-    data,
+    data: rows,
+    count,
   });
 };
 
