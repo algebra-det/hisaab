@@ -64,11 +64,11 @@ const getTransactions = async (req, res, next) => {
 
 const createTransaction = async (req, res, next) => {
   try {
-    const { productName, sellingPrice, profit } = req.body;
+    const { productName, purchasePrice, sellingPrice } = req.body;
     const data = await transactions.create({
       productName,
+      purchasePrice,
       sellingPrice,
-      profit,
       createdBy: req.user.id,
     });
     res.json({ message: "created Successfuly", data });
