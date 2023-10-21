@@ -27,6 +27,7 @@ app.use((req, res, next) => {
 });
 
 const transactionRouter = require("./routes/transactionRoutes");
+const productRouter = require("./routes/productRoutes");
 const adminRouter = require("./routes/adminRoutes");
 const authRouter = require("./routes/authRoutes");
 const homeRouter = require("./routes/homeRoutes");
@@ -34,6 +35,7 @@ const homeRouter = require("./routes/homeRoutes");
 app.use("/auth", authRouter);
 app.use("/admin", checkTokenAndRole(["admin"]), adminRouter);
 app.use("/transactions", checkTokenAndRole(["client"]), transactionRouter);
+app.use("/products", checkTokenAndRole(["client"]), productRouter);
 app.use("/", homeRouter);
 
 // Error Handler
