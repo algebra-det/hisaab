@@ -94,7 +94,7 @@ const login = async (req, res) => {
         const token = jwt.sign(
           { id: dbUser.id, name: dbUser.name, email, role: dbUser.role },
           process.env.JWT_LOGIN_TOKEN,
-          { expiresIn: "1d" }
+          { expiresIn: "30d" }
         );
         res.json({
           message: "Login Successful",
