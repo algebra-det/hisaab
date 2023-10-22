@@ -8,7 +8,7 @@ const checkTokenAndRole = (rolesToCheck) => {
       try {
         const decode = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);
         if (!rolesToCheck.includes(decode.role))
-          return res.status(400).json({
+          res.status(401).json({
             auth: false,
             data: "Not Authorized",
           });
@@ -16,13 +16,13 @@ const checkTokenAndRole = (rolesToCheck) => {
         next();
       } catch (error) {
         console.log("error: ", error);
-        res.status(400).json({
+        res.status(401).json({
           auth: false,
           data: "Invalid Token",
         });
       }
     } else {
-      res.json({
+      res.status(401).json({
         auth: false,
         data: "No Token Found in request",
       });
