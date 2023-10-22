@@ -1,7 +1,6 @@
 const router = require("express").Router();
+const homeController = require("../controller/homeController");
 
-router.get("/", (req, res, next) => {
-  return res.status(200).json({ message: "List Your Transactions." });
-});
+router.get("/", homeController.indexController);
 
 module.exports = router;

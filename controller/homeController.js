@@ -1,9 +1,9 @@
 const indexController = async (req, res, next) => {
-  res.status(400).json({
-    message:
-      "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
-  });
+  return res
+    .status(200)
+    .json({ message: "Comming Soon. List Your Transactions." });
 };
+
 module.exports = {
   indexController,
 };
