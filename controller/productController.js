@@ -5,7 +5,7 @@ const getMyProducts = async (req, res, next) => {
   let { limit, offset } = req.query;
   if (!offset) offset = 0;
   if (!limit) limit = 10;
-  const data = await Product.findAll({
+  const { count, rows } = await Product.findAndCountAll({
     offset,
     limit,
     where: {
@@ -14,7 +14,8 @@ const getMyProducts = async (req, res, next) => {
   });
   res.json({
     message: "Results fetched successfully",
-    data,
+    data: rows,
+    count,
   });
 };
 
