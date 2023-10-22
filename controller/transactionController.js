@@ -1,6 +1,7 @@
 const Transaction = require("../models/Transaction");
 const dayjs = require("dayjs");
 const { Op } = require("sequelize");
+const sequelize = require("../database");
 
 const getInstance = async (req, res) => {
   const transactionId = req.params.id;
@@ -35,6 +36,20 @@ const getTransactions = async (req, res, next) => {
     }
     let startTime = dayjs(workingDate).startOf(dateRange).format();
     let endTime = dayjs(workingDate).endOf(dateRange).format();
+    let totalProfit = await Transaction.findAll({
+      limit,
+      offset,
+      where: {
+        createdAt: {
+          [Op.gte]: startTime,
+          [Op.lte]: endTime,
+        },
+        createdBy: req.user.id,
+      },
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("profit")), "totalProfit"],
+      ],
+    });
     const { count, rows } = await Transaction.findAndCountAll({
       limit,
       offset,
@@ -49,6 +64,7 @@ const getTransactions = async (req, res, next) => {
     res.json({
       message: "Fetched Successfuly",
       data: rows,
+      totalProfit: totalProfit[0].dataValues.totalProfit,
       count,
       startTime,
       endTime,

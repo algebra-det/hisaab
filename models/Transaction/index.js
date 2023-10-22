@@ -18,19 +18,15 @@ module.exports = db.define(
       allowNull: false,
     },
     profit: {
-      type: DataTypes.VIRTUAL,
-      get() {
-        return (
-          this.getDataValue("sellingPrice") - this.getDataValue("purchasePrice")
-        );
-      },
-      set(value) {
-        throw new Error("Do not try to set the `profit` value!");
-      },
+      type: DataTypes.INTEGER,
     },
   },
   {
     hooks: {
+      afterValidate: (transaction) => {
+        transaction.profit =
+          transaction.sellingPrice - transaction.purchasePrice;
+      },
       afterSave(transaction) {
         createOrUpdateProducts(transaction);
       },
