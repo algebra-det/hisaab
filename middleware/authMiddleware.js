@@ -2,10 +2,12 @@ const jwt = require("jsonwebtoken");
 const checkTokenAndRole = (rolesToCheck) => {
   return (req, res, next) => {
     let token = req.headers.authorization;
+    if (!token) token = req.cookies.authorization;
+    console.log("Token : ", token);
 
     if (token) {
-      const token = req.headers.authorization?.split(" ")[1];
       try {
+        token = token.split(" ")[1];
         const decode = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);
         if (!rolesToCheck.includes(decode.role))
           res.status(401).json({

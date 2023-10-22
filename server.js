@@ -4,6 +4,9 @@ const port = 8000;
 require("dotenv").config();
 const db = require("./database");
 const { checkTokenAndRole } = require("./middleware/authMiddleware");
+const cookieParser = require("cookie-parser");
+
+app.use(cookieParser());
 
 const authenticateDB = async () => {
   try {

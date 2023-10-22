@@ -96,10 +96,17 @@ const login = async (req, res) => {
           process.env.JWT_LOGIN_TOKEN,
           { expiresIn: "30d" }
         );
-        res.json({
-          message: "Login Successful",
-          token,
-        });
+        res
+          .cookie("authorization", `Bearer ${token}`, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+          })
+          .json({
+            message: "Login Successful",
+            token,
+            role: dbUser.role,
+            name: dbUser.name,
+          });
       } else
         res.status(400).json({ message: "Username or Password incorrect" });
     } else res.status(400).json({ message: "Username or Password incorrect" });
