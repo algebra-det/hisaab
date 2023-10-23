@@ -97,9 +97,10 @@ const login = async (req, res) => {
           { expiresIn: "30d" }
         );
         res.json({
-          message: "Login Successful",
-          token,
+          name: dbUser.name,
           role: dbUser.role,
+          token,
+          message: "Login Successful",
         });
       } else
         res.status(400).json({ message: "Username or Password incorrect" });
