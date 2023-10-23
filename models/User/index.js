@@ -5,6 +5,10 @@ const createProfileHook = require("../../database/userHooks");
 module.exports = db.define(
   "User",
   {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
