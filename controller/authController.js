@@ -99,6 +99,7 @@ const login = async (req, res) => {
         res.json({
           message: "Login Successful",
           token,
+          role: dbUser.role,
         });
       } else
         res.status(400).json({ message: "Username or Password incorrect" });
