@@ -26,7 +26,9 @@ const validateSignupData = async (req, res) => {
   // check if email exists in DB!
   const existingUser = await User.findOne({ where: { email: email } });
   if (existingUser) {
-    res.status(400).json({ message: "Email Already Registered" });
+    res
+      .status(400)
+      .json({ message: "Email Already Registered", fieldName: "email" });
     return false;
   }
 
@@ -54,11 +56,11 @@ const signUp = async (req, res) => {
             user: { id: user.id, name: user.name, email: user.email },
           });
         } catch (error) {
-          return res.status(400).json({ message: error?.errors });
+          return res.status(500).json({ message: error?.errors });
         }
       } catch (err) {
         console.log(err);
-        return res.status(400).json({ message: err });
+        return res.status(500).json({ message: err });
       }
     }
   } catch (error) {
