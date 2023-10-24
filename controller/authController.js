@@ -98,10 +98,13 @@ const login = async (req, res) => {
           process.env.JWT_LOGIN_TOKEN,
           { expiresIn: "30d" }
         );
-        res.json({
+        const data = {
           name: dbUser.name,
           role: dbUser.role,
           token,
+        };
+        res.json({
+          data,
           message: "Login Successful",
         });
       } else
