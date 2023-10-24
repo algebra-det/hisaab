@@ -89,7 +89,7 @@ const login = async (req, res) => {
 
       if (match) {
         if (!dbUser.active)
-          return res.status(400).json({
+          return res.status(403).json({
             message: "a/c not active, please contact admin for a/c activation.",
           });
         console.log("cred: ", email, password);
@@ -109,7 +109,7 @@ const login = async (req, res) => {
     } else res.status(400).json({ message: "Username or Password incorrect" });
   } catch (error) {
     console.log("error occured: ", error);
-    res.status(400).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 };
 
