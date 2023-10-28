@@ -25,11 +25,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  console.log("First Middle Ware", req.query, req.body);
-  next();
-});
-
 const transactionRouter = require("./routes/transactionRoutes");
 const productRouter = require("./routes/productRoutes");
 const adminRouter = require("./routes/adminRoutes");
