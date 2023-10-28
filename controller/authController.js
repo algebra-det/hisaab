@@ -121,13 +121,15 @@ const verify = (req, res) => {
   let { token } = req.body;
   if (!token) token = req.headers.authorization;
   if (token) {
-    token = token.split(" ")[1];
     try {
-      const decode = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);
+      const decode = jwt.verify(
+        token.split(" ")[1],
+        process.env.JWT_LOGIN_TOKEN
+      );
 
       res.json({
         auth: true,
-        data: decode,
+        data: { ...decode, token },
       });
     } catch (error) {
       res.json({
