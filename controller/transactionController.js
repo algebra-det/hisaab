@@ -78,6 +78,44 @@ const getTransactions = async (req, res, next) => {
   }
 };
 
+const transactionStats = async (req, res) => {
+  try {
+    let { dateRange, workingDate, limit, offset } = req.query;
+    if (!dateRange) dateRange = "day";
+    if (!workingDate) workingDate = dayjs().format("YYYY-MM-DD");
+    if (!offset) offset = 0;
+    if (!limit) limit = 10;
+    else if (!["day", "week", "month", "year"].includes(dateRange)) {
+      return res.status(400).json({
+        message:
+          "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
+      });
+    }
+    let startTime = dayjs(workingDate).startOf(dateRange).format();
+    let endTime = dayjs(workingDate).endOf(dateRange).format();
+    let totalProfit = await Transaction.findAll({
+      limit,
+      offset,
+      where: {
+        createdAt: {
+          [Op.gte]: startTime,
+          [Op.lte]: endTime,
+        },
+        createdBy: req.user.id,
+      },
+      attributes: [
+        [sequelize.fn("SUM", sequelize.col("profit")), "totalProfit"],
+      ],
+    });
+    res.json({
+      message: "Fetched Successfuly",
+      totalProfit: totalProfit[0].dataValues.totalProfit,
+      startTime,
+      endTime,
+    });
+  } catch (error) {}
+};
+
 const createTransaction = async (req, res, next) => {
   try {
     const { productName, purchasePrice, sellingPrice } = req.body;
@@ -120,6 +158,7 @@ const deleteTransaction = async (req, res) => {
 
 module.exports = {
   getTransactions,
+  transactionStats,
   createTransaction,
   deleteTransaction,
   updateTransaction,
