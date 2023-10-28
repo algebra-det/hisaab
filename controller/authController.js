@@ -99,6 +99,7 @@ const login = async (req, res) => {
           { expiresIn: "30d" }
         );
         const data = {
+          id: dbUser.id,
           name: dbUser.name,
           role: dbUser.role,
           token,
