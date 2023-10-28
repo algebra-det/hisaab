@@ -114,7 +114,13 @@ const transactionStats = async (req, res) => {
       startTime,
       endTime,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("stats error: ", error)
+    res.status(400).json({
+      message: "Something went wrong",
+      error,
+    });
+  }
 };
 
 const createTransaction = async (req, res, next) => {
