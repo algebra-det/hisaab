@@ -117,9 +117,11 @@ const login = async (req, res) => {
   }
 };
 
-const auth = (req, res) => {
-  const { token } = req.body;
+const verify = (req, res) => {
+  let { token } = req.body;
+  if (!token) token = req.headers.authorization;
   if (token) {
+    token = token.split(" ")[1];
     try {
       const decode = jwt.verify(token, process.env.JWT_LOGIN_TOKEN);
 
@@ -144,5 +146,5 @@ const auth = (req, res) => {
 module.exports = {
   signUp,
   login,
-  auth,
+  verify,
 };
