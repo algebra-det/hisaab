@@ -62,7 +62,7 @@ const getTransactions = async (req, res, next) => {
       },
       order: [["updatedAt", "DESC"]],
     });
-    res.json({
+    return res.json({
       message: "Fetched Successfuly",
       data: rows,
       totalProfit: totalProfit[0].dataValues.totalProfit,
@@ -72,7 +72,7 @@ const getTransactions = async (req, res, next) => {
     });
   } catch (error) {
     console.log("Error while fetching transactions: ", error);
-    res.status(400).json({
+    return res.status(400).json({
       message: "Something went wrong",
       error,
     });
