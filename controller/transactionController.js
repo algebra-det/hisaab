@@ -60,6 +60,7 @@ const getTransactions = async (req, res, next) => {
         },
         createdBy: req.user.id,
       },
+      order: [["updatedAt", "DESC"]],
     });
     res.json({
       message: "Fetched Successfuly",

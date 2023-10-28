@@ -11,6 +11,7 @@ const getMyProducts = async (req, res, next) => {
     where: {
       createdBy: req.user.id,
     },
+    order: [["updatedAt", "DESC"]],
   });
   res.json({
     message: "Results fetched successfully",
