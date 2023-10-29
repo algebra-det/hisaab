@@ -100,6 +100,7 @@ const login = async (req, res) => {
         );
         const data = {
           id: dbUser.id,
+          email: dbUser.email,
           name: dbUser.name,
           role: dbUser.role,
           token,
