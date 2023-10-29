@@ -132,13 +132,13 @@ const verify = (req, res) => {
         data: { ...decode, token },
       });
     } catch (error) {
-      res.json({
+      res.status(401).json({
         auth: false,
         data: error.message,
       });
     }
   } else {
-    res.json({
+      res.status(401).json({
       auth: false,
       data: "No Token Found in request",
     });
