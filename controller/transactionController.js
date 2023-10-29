@@ -37,8 +37,6 @@ const getTransactions = async (req, res, next) => {
     let startTime = dayjs(workingDate).startOf(dateRange).format();
     let endTime = dayjs(workingDate).endOf(dateRange).format();
     let totalProfit = await Transaction.findAll({
-      limit,
-      offset,
       where: {
         createdAt: {
           [Op.gte]: startTime,
