@@ -50,6 +50,9 @@ const getTransactions = async (req, res, next) => {
         [sequelize.fn("SUM", sequelize.col("profit")), "totalProfit"],
       ],
     });
+    let ordering = ["createdAt", "ASC"];
+    if (workingDate === dayjs().format("YYYY-MM-DD") && dateRange === "day")
+      ordering = ["createdAt", "DESC"];
     const { count, rows } = await Transaction.findAndCountAll({
       limit,
       offset,
@@ -60,7 +63,7 @@ const getTransactions = async (req, res, next) => {
         },
         createdBy: req.user.id,
       },
-      order: [["updatedAt", "DESC"]],
+      order: [ordering],
     });
     return res.json({
       message: "Fetched Successfuly",
@@ -115,7 +118,7 @@ const transactionStats = async (req, res) => {
       endTime,
     });
   } catch (error) {
-    console.log("stats error: ", error)
+    console.log("stats error: ", error);
     res.status(400).json({
       message: "Something went wrong",
       error,
