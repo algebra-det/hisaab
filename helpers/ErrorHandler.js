@@ -14,7 +14,7 @@ const ErrorMiddleware = (error, req, res, next) => {
 
 const asyncError = (passedFunc) => (req, res) => {
   return Promise.resolve(passedFunc(req, res)).catch((err) => {
-    return errorHandler(res, 500, err.message);
+    return ErrorHandler(res, 500, err.message);
   });
 };
 
