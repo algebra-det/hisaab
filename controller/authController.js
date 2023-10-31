@@ -128,18 +128,18 @@ const verify = (req, res) => {
         process.env.JWT_LOGIN_TOKEN
       );
 
-      res.json({
+      return res.json({
         auth: true,
         data: { ...decode, token },
       });
     } catch (error) {
-      res.status(401).json({
+      return res.status(401).json({
         auth: false,
         data: error.message,
       });
     }
   } else {
-      res.status(401).json({
+    return res.status(401).json({
       auth: false,
       data: "No Token Found in request",
     });
