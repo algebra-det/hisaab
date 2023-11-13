@@ -21,7 +21,9 @@ const getMyProducts = async (req, res, next) => {
 }
 
 const getProductsViaSearch = async (req, res, next) => {
-  let { searchText } = req.query
+  let { searchText, limit, offset } = req.query
+  if (!offset) offset = 0
+  if (!limit) limit = 10
   if (!searchText || typeof searchText !== 'string' || searchText.length <= 2)
     return res.status(400).json({
       message:
@@ -29,12 +31,15 @@ const getProductsViaSearch = async (req, res, next) => {
     })
   console.log('To LowerCase: ', searchText, searchText.toLowerCase())
   const data = await Product.findAll({
+    offset,
+    limit,
     where: {
       createdBy: req.user.id,
       productName: {
         [Op.iLike]: '%' + searchText + '%',
       },
     },
+    order: [['updatedAt', 'DESC']],
   })
   res.json({
     message: 'Results fetched successfully',
