@@ -1,14 +1,21 @@
 const Product = require('../models/Product')
 const { Op } = require('sequelize')
+const getFilterDataFromRequest = require('../helpers/getFilterDataFromRequest')
 
 const getMyProducts = async (req, res, next) => {
-  let { limit, offset } = req.query
-  if (!offset) offset = 0
-  if (!limit) limit = 10
+  const { startTime, endTime, offset, limit } = getFilterDataFromRequest(
+    req,
+    res,
+    'month'
+  )
   const { count, rows } = await Product.findAndCountAll({
     offset,
     limit,
     where: {
+      createdAt: {
+        [Op.gte]: startTime,
+        [Op.lte]: endTime,
+      },
       createdBy: req.user.id,
     },
     order: [['updatedAt', 'DESC']],
