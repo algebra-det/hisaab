@@ -62,7 +62,7 @@ const createProduct = async (req, res, next) => {
     })
     if (prevProduct)
       return res.status(400).json({
-        message: `Already a product with this name having purchasePrice of ${prevProduct.purchasePrice}`,
+        message: `Already a product logged with this name having purchasePrice of ${prevProduct.purchasePrice}`,
         fieldName: 'productName',
       })
     const data = await Product.create({
