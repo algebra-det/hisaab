@@ -12,7 +12,7 @@ const getMyProducts = async (req, res, next) => {
     offset,
     limit,
     where: {
-      createdAt: {
+      updatedAt: {
         [Op.gte]: startTime,
         [Op.lte]: endTime,
       },
@@ -24,6 +24,8 @@ const getMyProducts = async (req, res, next) => {
     message: 'Results fetched successfully',
     data: rows,
     count,
+    startTime,
+    endTime,
   })
 }
 

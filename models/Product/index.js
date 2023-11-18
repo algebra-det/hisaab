@@ -22,7 +22,7 @@ module.exports = db.define(
   },
   {
     defaultScope: {
-      attributes: { exclude: ['createdAt', 'createdBy', 'updatedAt'] },
+      attributes: { exclude: ['createdAt', 'createdBy'] },
     },
   }
 )
