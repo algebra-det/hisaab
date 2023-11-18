@@ -61,7 +61,7 @@ const createProduct = async (req, res, next) => {
       where: { productName },
     })
     if (prevProduct)
-      res.status(400).json({
+      return res.status(400).json({
         message: `Already a product with this name having purchasePrice of ${prevProduct.purchasePrice}`,
         fieldName: 'productName',
       })
@@ -77,8 +77,22 @@ const createProduct = async (req, res, next) => {
   }
 }
 
+const updateProduct = async (req, res) => {
+  try {
+    const { purchasePrice } = req.body
+    const productID = req.params.id
+    const data = await Product.findByPk(productID)
+    await data.update({ purchasePrice })
+    res.json({ message: 'Updated successfully', data })
+  } catch (error) {
+    console.log('Error occured while deleting: ', error)
+    res.status(500).send({ message: 'Failed', error })
+  }
+}
+
 module.exports = {
   getMyProducts,
   getProductsViaSearch,
   createProduct,
+  updateProduct,
 }

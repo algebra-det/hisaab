@@ -17,12 +17,11 @@ const createOrUpdateProducts = async transaction => {
     })
     if (!product) createProduct(transaction)
     else {
-      product.update({
+      await product.update({
         purchasePrice: transaction.purchasePrice,
         lastSellingPrice: transaction.sellingPrice,
         totalSale: product.totalSale ? product.totalSale + 1 : 1,
       })
-      await product.save()
     }
   } catch (error) {
     console.log('Transaction Hook Error: ', error)
