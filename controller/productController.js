@@ -54,7 +54,23 @@ const getProductsViaSearch = async (req, res, next) => {
   })
 }
 
+const createProduct = async (req, res, next) => {
+  try {
+    const { productName, purchasePrice } = req.body
+    const data = await Product.create({
+      productName,
+      purchasePrice,
+      createdBy: req.user.id,
+    })
+    res.json({ message: 'created Successfuly', data })
+  } catch (error) {
+    console.log('error occured: ', error)
+    res.status(500).send({ message: 'Failed', error })
+  }
+}
+
 module.exports = {
   getMyProducts,
   getProductsViaSearch,
+  createProduct,
 }
