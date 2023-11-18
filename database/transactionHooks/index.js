@@ -5,6 +5,7 @@ const createProduct = async transaction => {
     productName: transaction.productName,
     purchasePrice: transaction.purchasePrice,
     lastSellingPrice: transaction.sellingPrice,
+    totalSale: 1,
     createdBy: transaction.createdBy,
   })
 }
@@ -15,11 +16,14 @@ const createOrUpdateProducts = async transaction => {
       where: { productName: transaction.productName },
     })
     if (!product) createProduct(transaction)
-    else if (product.purchasePrice !== transaction.purchasePrice)
+    else {
       product.update({
         purchasePrice: transaction.purchasePrice,
         lastSellingPrice: transaction.sellingPrice,
+        totalSale: product.totalSale ? product.totalSale + 1 : 1,
       })
+      await product.save()
+    }
   } catch (error) {
     console.log('Transaction Hook Error: ', error)
   }

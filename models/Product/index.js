@@ -15,6 +15,10 @@ module.exports = db.define(
     lastSellingPrice: {
       type: DataTypes.INTEGER,
     },
+    totalSale: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   },
   {
     defaultScope: {
