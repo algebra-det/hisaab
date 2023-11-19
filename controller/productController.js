@@ -33,9 +33,12 @@ const getMyProducts = async (req, res, next) => {
 
 const getProductsViaSearch = async (req, res, next) => {
   try {
-    let { searchText, limit, offset } = req.query
-    if (!offset) offset = 0
-    if (!limit) limit = 30
+    const { startTime, endTime, offset, limit } = getFilterDataFromRequest(
+      req,
+      res,
+      'year'
+    )
+    let { searchText } = req.query
     if (!searchText || typeof searchText !== 'string' || searchText.length <= 2)
       return res.status(400).json({
         message:
@@ -49,6 +52,10 @@ const getProductsViaSearch = async (req, res, next) => {
         createdBy: req.user.id,
         productName: {
           [Op.iLike]: '%' + searchText + '%',
+        },
+        updatedAt: {
+          [Op.gte]: startTime,
+          [Op.lte]: endTime,
         },
       },
       order: [['updatedAt', 'DESC']],
