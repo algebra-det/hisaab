@@ -32,30 +32,38 @@ const getMyProducts = async (req, res, next) => {
 }
 
 const getProductsViaSearch = async (req, res, next) => {
-  let { searchText, limit, offset } = req.query
-  if (!offset) offset = 0
-  if (!limit) limit = 10
-  if (!searchText || typeof searchText !== 'string' || searchText.length <= 2)
-    return res.status(400).json({
-      message:
-        "Please pass a text string and it's length should be atleast 3 characters",
-    })
-  console.log('To LowerCase: ', searchText, searchText.toLowerCase())
-  const data = await Product.findAll({
-    offset,
-    limit,
-    where: {
-      createdBy: req.user.id,
-      productName: {
-        [Op.iLike]: '%' + searchText + '%',
+  try {
+    let { searchText, limit, offset } = req.query
+    if (!offset) offset = 0
+    if (!limit) limit = 30
+    if (!searchText || typeof searchText !== 'string' || searchText.length <= 2)
+      return res.status(400).json({
+        message:
+          "Please pass a text string and it's length should be atleast 3 characters",
+      })
+    console.log('To LowerCase: ', searchText, searchText.toLowerCase())
+    const data = await Product.findAll({
+      offset,
+      limit,
+      where: {
+        createdBy: req.user.id,
+        productName: {
+          [Op.iLike]: '%' + searchText + '%',
+        },
       },
-    },
-    order: [['updatedAt', 'DESC']],
-  })
-  res.json({
-    message: 'Results fetched successfully',
-    data,
-  })
+      order: [['updatedAt', 'DESC']],
+    })
+    res.json({
+      message: 'Results fetched successfully',
+      data,
+    })
+  } catch (error) {
+    console.log('Error while searching: ', error)
+    res.status(500).json({
+      message: 'Something went wrong',
+      error,
+    })
+  }
 }
 
 const createProduct = async (req, res, next) => {
@@ -123,7 +131,7 @@ const productDetail = async (req, res) => {
       },
     })
   } catch (error) {
-    console.log('Error occured while deleting: ', error)
+    console.log('Error occured while updating: ', error)
     res.status(500).send({ message: 'Failed', error })
   }
 }
