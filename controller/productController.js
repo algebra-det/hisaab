@@ -38,25 +38,29 @@ const getProductsViaSearch = async (req, res, next) => {
       res,
       'year'
     )
-    let { searchText } = req.query
+    let { searchText, dateRange } = req.query
     if (!searchText || typeof searchText !== 'string' || searchText.length <= 2)
       return res.status(400).json({
         message:
           "Please pass a text string and it's length should be atleast 3 characters",
       })
     console.log('To LowerCase: ', searchText, searchText.toLowerCase())
+    const whereClauseOptions = {
+      createdBy: req.user.id,
+      productName: {
+        [Op.iLike]: '%' + searchText + '%',
+      },
+    }
+    if (dateRange)
+      whereClauseOptions.updatedAt = {
+        [Op.gte]: startTime,
+        [Op.lte]: endTime,
+      }
     const data = await Product.findAll({
       offset,
       limit,
       where: {
-        createdBy: req.user.id,
-        productName: {
-          [Op.iLike]: '%' + searchText + '%',
-        },
-        updatedAt: {
-          [Op.gte]: startTime,
-          [Op.lte]: endTime,
-        },
+        ...whereClauseOptions,
       },
       order: [['updatedAt', 'DESC']],
     })
