@@ -28,10 +28,8 @@ const getFilterDataFromRequest = (
   let endTime = dayjs(workingDate)
     .endOf(dateRange)
     .format('YYYY-MM-DDTHH:mm:ss')
-  startTime = dayjs.tz(startTime, timeZone).format()
-  endTime = dayjs.tz(endTime, timeZone).format()
-  startTime = dayjs(startTime).tz('UTC').format()
-  endTime = dayjs(endTime).tz('UTC').format()
+  startTime = dayjs.tz(startTime, timeZone).tz('UTC').format()
+  endTime = dayjs.tz(endTime, timeZone).tz('UTC').format()
   let ordering = ['createdAt', 'ASC']
   if (workingDate === dayjs().format('YYYY-MM-DD') && dateRange === 'day')
     ordering = ['createdAt', 'DESC']
