@@ -5,7 +5,12 @@ const timezone = require('dayjs/plugin/timezone')
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const getFilterDataFromRequest = (req, res, defaultDateRange = 'day') => {
+const getFilterDataFromRequest = (
+  req,
+  res,
+  defaultDateRange = 'day',
+  timeZone = 'Asia/Calcutta'
+) => {
   let { dateRange, workingDate, limit, offset } = req.query
   if (!dateRange) dateRange = defaultDateRange
   if (!workingDate) workingDate = dayjs().format('YYYY-MM-DD')
@@ -17,8 +22,19 @@ const getFilterDataFromRequest = (req, res, defaultDateRange = 'day') => {
         "Date Range sent is not valid. Valid options: ['day', 'week', 'month', 'year']",
     })
   }
-  let startTime = dayjs(workingDate).tz('UTC').format()
-  let endTime = dayjs(workingDate).tz('UTC').format()
+  let startTime = dayjs(workingDate)
+    .startOf(dateRange)
+    .format('YYYY-MM-DDTHH:mm:ss')
+  let endTime = dayjs(workingDate)
+    .endOf(dateRange)
+    .format('YYYY-MM-DDTHH:mm:ss')
+  console.log('day asia 1: ', startTime, endTime)
+  startTime = dayjs.tz(startTime, timeZone).format()
+  endTime = dayjs.tz(endTime, timeZone).format()
+  console.log('day asia 2: ', startTime, endTime)
+  startTime = dayjs(startTime).tz('UTC').format()
+  endTime = dayjs(endTime).tz('UTC').format()
+  console.log('day asia 3: ', startTime, endTime)
   let ordering = ['createdAt', 'ASC']
   if (workingDate === dayjs().format('YYYY-MM-DD') && dateRange === 'day')
     ordering = ['createdAt', 'DESC']
