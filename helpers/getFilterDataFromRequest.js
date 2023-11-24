@@ -28,13 +28,10 @@ const getFilterDataFromRequest = (
   let endTime = dayjs(workingDate)
     .endOf(dateRange)
     .format('YYYY-MM-DDTHH:mm:ss')
-  console.log('day asia 1: ', startTime, endTime)
   startTime = dayjs.tz(startTime, timeZone).format()
   endTime = dayjs.tz(endTime, timeZone).format()
-  console.log('day asia 2: ', startTime, endTime)
   startTime = dayjs(startTime).tz('UTC').format()
   endTime = dayjs(endTime).tz('UTC').format()
-  console.log('day asia 3: ', startTime, endTime)
   let ordering = ['createdAt', 'ASC']
   if (workingDate === dayjs().format('YYYY-MM-DD') && dateRange === 'day')
     ordering = ['createdAt', 'DESC']
