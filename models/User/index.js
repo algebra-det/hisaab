@@ -43,5 +43,5 @@ module.exports = db.define(
         createProfileHook(user);
       },
     },
-  }
+  },
 );

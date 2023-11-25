@@ -84,7 +84,7 @@ const login = async (req, res) => {
     if (dbUser) {
       const match = await compareOtherStringWithHashedString(
         password,
-        dbUser.password
+        dbUser.password,
       );
 
       if (match) {
@@ -96,7 +96,7 @@ const login = async (req, res) => {
         const token = jwt.sign(
           { id: dbUser.id, name: dbUser.name, email, role: dbUser.role },
           process.env.JWT_LOGIN_TOKEN,
-          { expiresIn: "30d" }
+          { expiresIn: "30d" },
         );
         const data = {
           id: dbUser.id,
@@ -125,7 +125,7 @@ const verify = (req, res) => {
     try {
       const decode = jwt.verify(
         token.split(" ")[1],
-        process.env.JWT_LOGIN_TOKEN
+        process.env.JWT_LOGIN_TOKEN,
       );
 
       return res.json({

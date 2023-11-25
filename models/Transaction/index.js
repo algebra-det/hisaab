@@ -31,5 +31,5 @@ module.exports = db.define(
         createOrUpdateProducts(transaction);
       },
     },
-  }
+  },
 );

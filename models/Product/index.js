@@ -1,8 +1,8 @@
-const { DataTypes } = require('sequelize')
-const db = require('../../database')
+const { DataTypes } = require("sequelize");
+const db = require("../../database");
 
 module.exports = db.define(
-  'Product',
+  "Product",
   {
     productName: {
       type: DataTypes.STRING,
@@ -22,7 +22,7 @@ module.exports = db.define(
   },
   {
     defaultScope: {
-      attributes: { exclude: ['createdAt', 'createdBy'] },
+      attributes: { exclude: ["createdAt", "createdBy"] },
     },
-  }
-)
+  },
+);
