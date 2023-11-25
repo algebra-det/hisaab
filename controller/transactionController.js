@@ -7,16 +7,16 @@ const getInstance = async (req, res) => {
   const transactionId = req.params.id
   if (!transactionId)
     return res.status(400).json({
-      message: 'Transaction ID is required',
+      message: 'Transaction ID is required'
     })
   const transaction = await Transaction.findByPk(transactionId)
   if (!transaction)
     return res.status(400).json({
-      message: 'No transaction found.',
+      message: 'No transaction found.'
     })
   if (transaction.createdBy !== req.user.id)
     return res.status(400).json({
-      message: 'Not authorized to update such transactions',
+      message: 'Not authorized to update such transactions'
     })
   return transaction
 }
@@ -29,13 +29,13 @@ const getTransactions = async (req, res, next) => {
       where: {
         createdAt: {
           [Op.gte]: startTime,
-          [Op.lte]: endTime,
+          [Op.lte]: endTime
         },
-        createdBy: req.user.id,
+        createdBy: req.user.id
       },
       attributes: [
-        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit'],
-      ],
+        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
+      ]
     })
     const { count, rows } = await Transaction.findAndCountAll({
       limit,
@@ -43,11 +43,11 @@ const getTransactions = async (req, res, next) => {
       where: {
         createdAt: {
           [Op.gte]: startTime,
-          [Op.lte]: endTime,
+          [Op.lte]: endTime
         },
-        createdBy: req.user.id,
+        createdBy: req.user.id
       },
-      order: [ordering],
+      order: [ordering]
     })
     return res.json({
       message: 'Fetched Successfuly',
@@ -55,13 +55,13 @@ const getTransactions = async (req, res, next) => {
       totalProfit: totalProfit[0].dataValues.totalProfit,
       count,
       startTime,
-      endTime,
+      endTime
     })
   } catch (error) {
     console.log('Error while fetching transactions: ', error)
     return res.status(400).json({
       message: 'Something went wrong',
-      error,
+      error
     })
   }
 }
@@ -78,25 +78,25 @@ const transactionStats = async (req, res) => {
       where: {
         createdAt: {
           [Op.gte]: startTime,
-          [Op.lte]: endTime,
+          [Op.lte]: endTime
         },
-        createdBy: req.user.id,
+        createdBy: req.user.id
       },
       attributes: [
-        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit'],
-      ],
+        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
+      ]
     })
     res.json({
       message: 'Fetched Successfuly',
       totalProfit: totalProfit[0].dataValues.totalProfit,
       startTime,
-      endTime,
+      endTime
     })
   } catch (error) {
     console.log('stats error: ', error)
     res.status(400).json({
       message: 'Something went wrong',
-      error,
+      error
     })
   }
 }
@@ -108,7 +108,7 @@ const createTransaction = async (req, res, next) => {
       productName,
       purchasePrice,
       sellingPrice,
-      createdBy: req.user.id,
+      createdBy: req.user.id
     })
     res.json({ message: 'created Successfuly', data })
   } catch (error) {
@@ -146,5 +146,5 @@ module.exports = {
   transactionStats,
   createTransaction,
   deleteTransaction,
-  updateTransaction,
+  updateTransaction
 }
