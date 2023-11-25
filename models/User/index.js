@@ -1,13 +1,13 @@
-const { DataTypes } = require("sequelize");
-const db = require("../../database");
-const createProfileHook = require("../../database/userHooks");
+const { DataTypes } = require('sequelize')
+const db = require('../../database')
+const createProfileHook = require('../../database/userHooks')
 
 module.exports = db.define(
-  "User",
+  'User',
   {
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     email: {
       type: DataTypes.STRING,
@@ -15,33 +15,33 @@ module.exports = db.define(
       unique: true,
       lowercase: true,
       validate: {
-        isEmail: true,
-      },
+        isEmail: true
+      }
     },
     password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: [3, 255],
-      },
+        len: [3, 255]
+      }
     },
     role: {
-      type: DataTypes.ENUM(["admin", "client"]),
-      defaultValue: "client",
+      type: DataTypes.ENUM(['admin', 'client']),
+      defaultValue: 'client'
     },
     active: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
+      defaultValue: false
+    }
   },
   {
     defaultScope: {
-      attributes: { exclude: ["password"] },
+      attributes: { exclude: ['password'] }
     },
     hooks: {
       afterCreate(user) {
-        createProfileHook(user);
-      },
-    },
-  },
-);
+        createProfileHook(user)
+      }
+    }
+  }
+)

@@ -1,156 +1,156 @@
-const sequelize = require("../database");
-const Product = require("../models/Product");
-const Transaction = require("../models/Transaction");
-const { Op } = require("sequelize");
-const getFilterDataFromRequest = require("../helpers/getFilterDataFromRequest");
+const sequelize = require('../database')
+const Product = require('../models/Product')
+const Transaction = require('../models/Transaction')
+const { Op } = require('sequelize')
+const getFilterDataFromRequest = require('../helpers/getFilterDataFromRequest')
 
 const getMyProducts = async (req, res, next) => {
   const { startTime, endTime, offset, limit } = getFilterDataFromRequest(
     req,
     res,
-    "month",
-  );
+    'month'
+  )
   const { count, rows } = await Product.findAndCountAll({
     offset,
     limit,
     where: {
       updatedAt: {
         [Op.gte]: startTime,
-        [Op.lte]: endTime,
+        [Op.lte]: endTime
       },
-      createdBy: req.user.id,
+      createdBy: req.user.id
     },
-    order: [["updatedAt", "DESC"]],
-  });
+    order: [['updatedAt', 'DESC']]
+  })
   res.json({
-    message: "Results fetched successfully",
+    message: 'Results fetched successfully',
     data: rows,
     count,
     startTime,
-    endTime,
-  });
-};
+    endTime
+  })
+}
 
 const getProductsViaSearch = async (req, res, next) => {
   try {
     const { startTime, endTime, offset, limit } = getFilterDataFromRequest(
       req,
       res,
-      "year",
-    );
-    let { searchText, dateRange } = req.query;
-    if (!searchText || typeof searchText !== "string" || searchText.length <= 2)
+      'year'
+    )
+    let { searchText, dateRange } = req.query
+    if (!searchText || typeof searchText !== 'string' || searchText.length <= 2)
       return res.status(400).json({
         message:
-          "Please pass a text string and it's length should be atleast 3 characters",
-      });
-    console.log("To LowerCase: ", searchText, searchText.toLowerCase());
+          "Please pass a text string and it's length should be atleast 3 characters"
+      })
+    console.log('To LowerCase: ', searchText, searchText.toLowerCase())
     const whereClauseOptions = {
       createdBy: req.user.id,
       productName: {
-        [Op.iLike]: "%" + searchText + "%",
-      },
-    };
+        [Op.iLike]: '%' + searchText + '%'
+      }
+    }
     if (dateRange)
       whereClauseOptions.updatedAt = {
         [Op.gte]: startTime,
-        [Op.lte]: endTime,
-      };
+        [Op.lte]: endTime
+      }
     const data = await Product.findAll({
       offset,
       limit,
       where: {
-        ...whereClauseOptions,
+        ...whereClauseOptions
       },
-      order: [["updatedAt", "DESC"]],
-    });
+      order: [['updatedAt', 'DESC']]
+    })
     res.json({
-      message: "Results fetched successfully",
-      data,
-    });
+      message: 'Results fetched successfully',
+      data
+    })
   } catch (error) {
-    console.log("Error while searching: ", error);
+    console.log('Error while searching: ', error)
     res.status(500).json({
-      message: "Something went wrong",
-      error,
-    });
+      message: 'Something went wrong',
+      error
+    })
   }
-};
+}
 
 const createProduct = async (req, res, next) => {
   try {
-    const { productName, purchasePrice } = req.body;
+    const { productName, purchasePrice } = req.body
     const prevProduct = await Product.findOne({
-      where: { productName },
-    });
+      where: { productName }
+    })
     if (prevProduct)
       return res.status(400).json({
         message: `Already a product logged with this name having purchasePrice of ${prevProduct.purchasePrice}`,
-        fieldName: "productName",
-      });
+        fieldName: 'productName'
+      })
     const data = await Product.create({
       productName,
       purchasePrice,
-      createdBy: req.user.id,
-    });
-    res.json({ message: "created Successfuly", data });
+      createdBy: req.user.id
+    })
+    res.json({ message: 'created Successfuly', data })
   } catch (error) {
-    console.log("error occured: ", error);
-    res.status(500).send({ message: "Failed", error });
+    console.log('error occured: ', error)
+    res.status(500).send({ message: 'Failed', error })
   }
-};
+}
 
 const updateProduct = async (req, res) => {
   try {
-    const { purchasePrice } = req.body;
-    const productID = req.params.id;
-    const data = await Product.findByPk(productID);
-    await data.update({ purchasePrice });
-    res.json({ message: "Updated successfully", data });
+    const { purchasePrice } = req.body
+    const productID = req.params.id
+    const data = await Product.findByPk(productID)
+    await data.update({ purchasePrice })
+    res.json({ message: 'Updated successfully', data })
   } catch (error) {
-    console.log("Error occured while deleting: ", error);
-    res.status(500).send({ message: "Failed", error });
+    console.log('Error occured while deleting: ', error)
+    res.status(500).send({ message: 'Failed', error })
   }
-};
+}
 
 const productDetail = async (req, res) => {
   try {
-    const productID = req.params.id;
-    const product = await Product.findByPk(productID);
+    const productID = req.params.id
+    const product = await Product.findByPk(productID)
     let totalProfit = await Transaction.findAll({
       where: {
         productName: product.productName,
-        createdBy: req.user.id,
+        createdBy: req.user.id
       },
       attributes: [
-        [sequelize.fn("SUM", sequelize.col("profit")), "totalProfit"],
-      ],
-    });
+        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
+      ]
+    })
     const count = await Transaction.count({
       where: {
         productName: product.productName,
-        createdBy: req.user.id,
+        createdBy: req.user.id
       },
-      order: ["createdAt", "DESC"],
-    });
+      order: ['createdAt', 'DESC']
+    })
     res.json({
-      message: "fetched successfully",
+      message: 'fetched successfully',
       data: {
         ...product.dataValues,
         totalProfit: totalProfit[0].dataValues.totalProfit,
-        count,
-      },
-    });
+        count
+      }
+    })
   } catch (error) {
-    console.log("Error occured while updating: ", error);
-    res.status(500).send({ message: "Failed", error });
+    console.log('Error occured while updating: ', error)
+    res.status(500).send({ message: 'Failed', error })
   }
-};
+}
 
 module.exports = {
   getMyProducts,
   getProductsViaSearch,
   createProduct,
   updateProduct,
-  productDetail,
-};
+  productDetail
+}

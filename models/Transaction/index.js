@@ -1,35 +1,35 @@
-const { DataTypes } = require("sequelize");
-const db = require("../../database");
-const createOrUpdateProducts = require("../../database/transactionHooks");
+const { DataTypes } = require('sequelize')
+const db = require('../../database')
+const createOrUpdateProducts = require('../../database/transactionHooks')
 
 module.exports = db.define(
-  "Transaction",
+  'Transaction',
   {
     productName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     purchasePrice: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
     sellingPrice: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: false
     },
     profit: {
-      type: DataTypes.INTEGER,
-    },
+      type: DataTypes.INTEGER
+    }
   },
   {
     hooks: {
-      afterValidate: (transaction) => {
+      afterValidate: transaction => {
         transaction.profit =
-          transaction.sellingPrice - transaction.purchasePrice;
+          transaction.sellingPrice - transaction.purchasePrice
       },
       afterSave(transaction) {
-        createOrUpdateProducts(transaction);
-      },
-    },
-  },
-);
+        createOrUpdateProducts(transaction)
+      }
+    }
+  }
+)

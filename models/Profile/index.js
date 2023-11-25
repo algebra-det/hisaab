@@ -1,11 +1,11 @@
-const { DataTypes } = require("sequelize");
-const db = require("../../database");
+const { DataTypes } = require('sequelize')
+const db = require('../../database')
 
-module.exports = db.define("Profile", {
+module.exports = db.define('Profile', {
   name: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING
   },
   ProfilePic: {
-    type: DataTypes.STRING,
-  },
-});
+    type: DataTypes.STRING
+  }
+})
