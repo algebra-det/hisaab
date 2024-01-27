@@ -4,12 +4,12 @@ const sequelize = require('../database')
 const getFilterDataFromRequest = require('../helpers/getFilterDataFromRequest')
 
 const getInstance = async (req, res) => {
-  const transactionId = req.params.id
-  if (!transactionId)
+  const { id } = req.params
+  if (!id)
     return res.status(400).json({
       message: 'Transaction ID is required'
     })
-  const transaction = await Transaction.findByPk(transactionId)
+  const transaction = await Transaction.findByPk(id)
   if (!transaction)
     return res.status(400).json({
       message: 'No transaction found.'
@@ -25,30 +25,33 @@ const getTransactions = async (req, res, next) => {
   try {
     const { startTime, endTime, ordering, offset, limit } =
       getFilterDataFromRequest(req, res)
-    let totalProfit = await Transaction.findAll({
-      where: {
-        createdAt: {
-          [Op.gte]: startTime,
-          [Op.lte]: endTime
+
+    const [totalProfit, { rows, count }] = await Promise.all([
+      Transaction.findAll({
+        where: {
+          createdAt: {
+            [Op.gte]: startTime,
+            [Op.lte]: endTime
+          },
+          createdBy: req.user.id
         },
-        createdBy: req.user.id
-      },
-      attributes: [
-        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
-      ]
-    })
-    const { count, rows } = await Transaction.findAndCountAll({
-      limit,
-      offset,
-      where: {
-        createdAt: {
-          [Op.gte]: startTime,
-          [Op.lte]: endTime
+        attributes: [
+          [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
+        ]
+      }),
+      Transaction.findAndCountAll({
+        limit,
+        offset,
+        where: {
+          createdAt: {
+            [Op.gte]: startTime,
+            [Op.lte]: endTime
+          },
+          createdBy: req.user.id
         },
-        createdBy: req.user.id
-      },
-      order: [ordering]
-    })
+        order: [ordering]
+      })
+    ])
     return res.json({
       message: 'Fetched Successfuly',
       data: rows,

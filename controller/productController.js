@@ -116,23 +116,26 @@ const updateProduct = async (req, res) => {
 const productDetail = async (req, res) => {
   try {
     const productID = req.params.id
+
     const product = await Product.findByPk(productID)
-    let totalProfit = await Transaction.findAll({
-      where: {
-        productName: product.productName,
-        createdBy: req.user.id
-      },
-      attributes: [
-        [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
-      ]
-    })
-    const count = await Transaction.count({
-      where: {
-        productName: product.productName,
-        createdBy: req.user.id
-      },
-      order: ['createdAt', 'DESC']
-    })
+    let [totalProfit, count] = await Promise.all([
+      Transaction.findAll({
+        where: {
+          productName: product.productName,
+          createdBy: req.user.id
+        },
+        attributes: [
+          [sequelize.fn('SUM', sequelize.col('profit')), 'totalProfit']
+        ]
+      }),
+      Transaction.count({
+        where: {
+          productName: product.productName,
+          createdBy: req.user.id
+        },
+        order: ['createdAt', 'DESC']
+      })
+    ])
     res.json({
       message: 'fetched successfully',
       data: {
