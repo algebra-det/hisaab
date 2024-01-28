@@ -2,7 +2,7 @@ const User = require('../models/User')
 const { Op } = require('sequelize')
 const { hashString } = require('../helpers/bcryptHelper')
 
-const allUsers = async (req, res, next) => {
+const allUsers = async (req, res, _next) => {
   try {
     let { limit, offset } = req.query
     if (!offset) offset = 0

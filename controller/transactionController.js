@@ -21,7 +21,7 @@ const getInstance = async (req, res) => {
   return transaction
 }
 
-const getTransactions = async (req, res, next) => {
+const getTransactions = async (req, res, _next) => {
   try {
     const { startTime, endTime, ordering, offset, limit } =
       getFilterDataFromRequest(req, res)
@@ -104,7 +104,7 @@ const transactionStats = async (req, res) => {
   }
 }
 
-const createTransaction = async (req, res, next) => {
+const createTransaction = async (req, res, _next) => {
   try {
     const { productName, purchasePrice, sellingPrice } = req.body
     const data = await Transaction.create({

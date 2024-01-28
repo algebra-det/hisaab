@@ -4,7 +4,7 @@ const Transaction = require('../models/Transaction')
 const { Op } = require('sequelize')
 const getFilterDataFromRequest = require('../helpers/getFilterDataFromRequest')
 
-const getMyProducts = async (req, res, next) => {
+const getMyProducts = async (req, res, _next) => {
   const { startTime, endTime, offset, limit } = getFilterDataFromRequest(
     req,
     res,
