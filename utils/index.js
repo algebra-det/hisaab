@@ -1,10 +1,11 @@
-
 const asyncHandler = require('./asyncHandler')
-const {errorHandler, errorMiddleware, asyncError} = require('./errorHandler')
+const ApiResponse = require('./ApiResponse')
+const ErrorResponse = require('./ErrorResponse')
+const { errorHandler } = require('./errorHandler')
 
 module.exports = {
   asyncHandler,
   errorHandler,
-  errorMiddleware,
-  asyncError
+  ApiResponse,
+  ErrorResponse
 }

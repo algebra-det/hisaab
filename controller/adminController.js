@@ -1,31 +1,25 @@
 const User = require('../models/User')
 const { Op } = require('sequelize')
-const { hashString } = require('../helpers/bcryptHelper')
+const { hashString } = require('../helpers')
+const { asyncHandler } = require('../utils')
 
-const allUsers = async (req, res, _next) => {
-  try {
-    let { limit, offset } = req.query
-    if (!offset) offset = 0
-    if (!limit) limit = 10
-    const { count, rows } = await User.findAndCountAll({
-      limit,
-      offset,
-      where: {
-        [Op.not]: [{ id: req.user.id }, { role: 'admin' }]
-      }
-    })
-    res.json({
-      message: 'Fetched Successfully',
-      data: rows,
-      count
-    })
-  } catch (error) {
-    res.status(400).json({
-      message: 'Failed to fetch',
-      error
-    })
-  }
-}
+const allUsers = asyncHandler(async (req, res, _next) => {
+  let { limit, offset } = req.query
+  if (!offset) offset = 0
+  if (!limit) limit = 10
+  const { count, rows } = await User.findAndCountAll({
+    limit,
+    offset,
+    where: {
+      [Op.not]: [{ id: req.user.id }, { role: 'admin' }]
+    }
+  })
+  res.json({
+    message: 'Fetched Successfully',
+    data: rows,
+    count
+  })
+})
 
 const activateUser = async (req, res) => {
   const { active } = req.body
