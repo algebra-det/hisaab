@@ -1,7 +1,7 @@
 const User = require('../models/User')
 const { Op } = require('sequelize')
 const { hashString } = require('../helpers')
-const { asyncHandler } = require('../utils')
+const { asyncHandler, ErrorResponse, ApiResponse } = require('../utils')
 
 const allUsers = asyncHandler(async (req, res, _next) => {
   let { limit, offset } = req.query
@@ -14,94 +14,57 @@ const allUsers = asyncHandler(async (req, res, _next) => {
       [Op.not]: [{ id: req.user.id }, { role: 'admin' }]
     }
   })
-  res.json({
-    message: 'Fetched Successfully',
-    data: rows,
-    count
-  })
+  const data = { rows, count }
+  res.json(new ApiResponse(data, 'Fetched Successfully'))
 })
 
-const activateUser = async (req, res) => {
+const activateUser = asyncHandler(async (req, res) => {
   const { active } = req.body
   const { userId } = req.params
   if (!userId || typeof active !== 'boolean')
-    return res.status(400).json({
-      message: 'Please enter correct values'
-    })
+    throw new ErrorResponse(400, 'Please enter correct values')
 
   const requiredUser = await User.findByPk(userId)
   if (!requiredUser)
-    return res.status(400).json({
-      message: `No User found with ID ${userId}`
-    })
+    throw new ErrorResponse(400, `No User found with ID ${userId}`)
 
   await requiredUser.update({ active })
-  return res.json({
-    message: 'User Status updated successfully',
-    data: requiredUser
-  })
-}
+  res.json(new ApiResponse(requiredUser, 'User Status updated successfully'))
+})
 
-const updateUser = async (req, res) => {
-  try {
-    const userBody = req.body
-    const { userId } = req.params
-    delete userBody['id']
-    if (!userId)
-      return res.status(400).json({
-        message: 'user id is required'
-      })
-    if (userBody.password)
-      userBody.password = await hashString(userBody.password)
-
-    const requiredUser = await User.findByPk(userId)
-    if (!requiredUser)
-      return res.status(400).json({
-        message: `No User found with ID ${userId}`
-      })
-
-    if (requiredUser.role === 'admin' || requiredUser.id === req.user.id)
-      return res.status(400).json({
-        message: `Not Authorized to delete such/this user(s)`
-      })
-
-    await requiredUser.update({ ...userBody })
-    return res.json({
-      message: 'User Status updated successfully',
-      data: requiredUser
-    })
-  } catch (error) {
-    console.log('Error while updating user: ', error)
-    return res.status(400).json({
-      message: "Can't update user",
-      error
-    })
-  }
-}
-
-const deleteUser = async (req, res) => {
+const updateUser = asyncHandler(async (req, res) => {
+  const userBody = req.body
   const { userId } = req.params
-  if (!userId)
-    return res.status(400).json({
-      message: 'UserId is required'
-    })
+  delete userBody['id']
+  if (!userId) throw new ErrorResponse(400, 'user id is required')
+  if (userBody.password) userBody.password = await hashString(userBody.password)
 
   const requiredUser = await User.findByPk(userId)
   if (!requiredUser)
-    return res.status(400).json({
-      message: `No User found with ID ${userId}`
-    })
+    throw new ErrorResponse(400, `No User found with ID ${userId}`)
+
   if (requiredUser.role === 'admin' || requiredUser.id === req.user.id)
-    return res.status(400).json({
-      message: `Not Authorized to delete such/this user(s)`
-    })
+    throw new ErrorResponse(400, `Not Authorized to delete such/this user(s)`)
+
+  await requiredUser.update({ ...userBody })
+  res.json(new ApiResponse(requiredUser, 'User Status updated successfully'))
+})
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const { userId } = req.params
+  if (!userId) throw new ErrorResponse(400, 'UserId is required')
+
+  const requiredUser = await User.findByPk(userId)
+  if (!requiredUser)
+    throw new ErrorResponse(400, `No User found with ID ${userId}`)
+
+  if (requiredUser.role === 'admin' || requiredUser.id === req.user.id)
+    throw new ErrorResponse(400, `Not Authorized to delete such/this user(s)`)
 
   await requiredUser.destroy()
-  return res.json({
-    message: 'User Deleted Successfully',
-    data: requiredUser
-  })
-}
+  res.json(new ApiResponse(requiredUser, 'User Deleted Successfully'))
+})
+
 module.exports = {
   allUsers,
   activateUser,

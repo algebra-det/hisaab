@@ -65,7 +65,7 @@ const login = asyncHandler(async (req, res) => {
     role: dbUser.role,
     token
   }
-  res.json(new ApiResponse(data, 200, 'Login Successful'))
+  res.json(new ApiResponse(data, 'Login Successful'))
 })
 
 const verify = asyncHandler(async (req, res) => {
