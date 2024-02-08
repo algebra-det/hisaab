@@ -30,7 +30,7 @@ const productRouter = require('./routes/productRoutes')
 const adminRouter = require('./routes/adminRoutes')
 const authRouter = require('./routes/authRoutes')
 const homeRouter = require('./routes/homeRoutes')
-const { ErrorMiddleware } = require('./helpers/ErrorHandler')
+const { errorMiddleware } = require('./utils')
 
 app.use('/auth', authRouter)
 app.use('/admin', checkTokenAndRole(['admin']), adminRouter)
@@ -39,7 +39,7 @@ app.use('/products', checkTokenAndRole(['client']), productRouter)
 app.use('/', homeRouter)
 
 // Error Handler
-app.use(ErrorMiddleware)
+app.use(errorMiddleware)
 
 app.use((_req, res, _next) => {
   res.status(404).send({ message: 'No Page found' })

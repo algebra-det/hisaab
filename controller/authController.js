@@ -3,7 +3,7 @@ const User = require('../models/User')
 const {
   hashString,
   compareOtherStringWithHashedString
-} = require('../helpers/bcryptHelper')
+} = require('../helpers')
 
 const validateSignupData = async (req, res) => {
   const { name, email, password } = req.body
