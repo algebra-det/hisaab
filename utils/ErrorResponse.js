@@ -2,12 +2,13 @@ class ErrorResponse extends Error {
   constructor(
     statusCode,
     message = 'Something went wrong',
+    data = null,
     errors = [],
     stack = ''
   ) {
     super(message)
     this.statusCode = statusCode
-    this.data = null
+    this.data = data
     this.message = message
     this.success = false
     this.errors = errors
