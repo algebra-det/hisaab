@@ -1,4 +1,11 @@
-const {bcryptHelper, compareOtherStringWithHashedString} = require('./bcryptHelper')
-const {hashString, getFilterDataFromRequest} = require('./getFilterDataFromRequest')
+const {
+  hashString,
+  compareOtherStringWithHashedString
+} = require('./bcryptHelper')
+const getFilterDataFromRequest = require('./getFilterDataFromRequest')
 
-module.exports = { bcryptHelper, compareOtherStringWithHashedString, hashString, getFilterDataFromRequest }
+module.exports = {
+  hashString,
+  compareOtherStringWithHashedString,
+  getFilterDataFromRequest
+}
